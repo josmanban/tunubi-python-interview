@@ -3,9 +3,10 @@ from flask import Flask, request, json, Response
 from pymongo import MongoClient
 import datetime
 from bson import ObjectId
+import pdb
 
 print("connecting database...")
-client = MongoClient(host='db')
+client = MongoClient("mongodb://localhost:27017/tunubi")
 print("connection established with Mongo")
 
 class MongoAPI:
