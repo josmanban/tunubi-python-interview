@@ -6,7 +6,7 @@ from bson import ObjectId
 import pdb
 
 print("connecting database...")
-client = MongoClient("mongodb://localhost:27017/tunubi")
+client = MongoClient("mongodb://localhost:27017")
 print("connection established with Mongo")
 
 class MongoAPI:
