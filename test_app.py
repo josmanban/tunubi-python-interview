@@ -4,18 +4,33 @@ import pytest
 import pdb
 import json
 from util.mongo_client_wrapper import MongoAPI
-
+import datetime
 from app import *
 
 
-@pytest.fixture(scope="class")
+@pytest.fixture
 def client():
-    pdb.set_trace()
     with app.test_client() as client:
         with app.app_context():
             app.config['TESTING']=True
             app.config['DB_NAME']='test_polls'
+            db = MongoAPI("test_polls","polls")
+            db.write_bulk([
+                {
+                    "poll":"foo?",
+                    "CreatedDate": datetime.datetime.today()
+                },
+                {
+                    "poll":"foo?",
+                    "CreatedDate": datetime.datetime.today()
+                },
+                {
+                    "poll":"foo?",
+                    "CreatedDate": datetime.datetime.today()
+                },
+            ])
         yield client
+        db.delete_many({})
 
 def test_list_polls(client):
     rv = client.get('/getPolls')

@@ -24,3 +24,11 @@ class MongoAPI:
         new_document["CreatedDate"] = datetime.datetime.today()
         result = self.collection.insert_one(new_document)
         return str(result.inserted_id)
+    
+    def write_bulk(self, data):
+        result = self.collection.insert_many(data)
+        return str(result.inserted_ids)
+
+    def delete_many(self, query):
+        result = self.collection.delete_many(query)
+        return str(result.deleted_count)
