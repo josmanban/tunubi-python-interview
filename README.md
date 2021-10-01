@@ -27,12 +27,5 @@ Para ayudarte, el equipo de desarrollo preparó algunos ejemplos de uso de la AP
 
 Las propuestas que hagas pueden ser de cualquier tipo, siempre que sean coherentes entre sí.
 
-Podés preguntar cualquier duda que tengas respecto a los requerimientos del PO.
-
-La solución del ejercicio deberás subirla a un repositorio privado, darnos acceso compartirnos el link.
-
-El commit original tendrá que ser con los archivos tal cual te los damos.
-
-Cada propuesta que elijas implementar deberá ser desarrollada en un commit independiente.
-
-La documentación de la solución (problemas encontrados y justificaciones) también deberá estar en el mismo repo. Podés usar el formato que prefieras, mientras más detallado mejor.
+run tests
+    pytest -v
