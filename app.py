@@ -38,11 +38,7 @@ def polls_post():
 @app.route('/get_polls')
 def polls_get():
     db_name = app.config['DB_NAME']
-    polls = MongoAPI(db_name, "polls").read()
-    answers = MongoAPI(db_name, "answers").read()
-    for poll in polls:
-        poll['answers'] = [
-            answer for answer in answers if answer['poll_id'] == poll['_id']]
+    polls = MongoAPI(db_name, "polls").read_polls()
     return Response(
         response=json.dumps(polls),
         status=200,
