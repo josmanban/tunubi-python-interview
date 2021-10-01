@@ -17,15 +17,15 @@ def client():
             db = MongoAPI("test_polls","polls")
             db.write_bulk([
                 {
-                    "poll":"foo?",
+                    "question":"foo?",
                     "CreatedDate": datetime.datetime.today()
                 },
                 {
-                    "poll":"foo?",
+                    "question":"foo?",
                     "CreatedDate": datetime.datetime.today()
                 },
                 {
-                    "poll":"foo?",
+                    "question":"foo?",
                     "CreatedDate": datetime.datetime.today()
                 },
             ])
@@ -33,21 +33,44 @@ def client():
         db.delete_many({})
 
 def test_list_polls(client):
-    rv = client.get('/getPolls')
+    rv = client.get('/get_polls')
     json_data = rv.get_json()
+    assert rv.status_code == 200
     assert json_data is not None
     assert len(json_data) > 0
 
 def test_polls_post(client):
     rv = client.post(
-        '/addPoll',
+        '/add_poll',
         json={"poll":"foo"},
         follow_redirects=True
     )
     new_id = rv.get_json()
+    assert rv.status_code == 200
     assert new_id is not None
 
-    rv = client.get('/getPolls')
-    json_data = rv.get_json()
-    assert len(json_data) > 0
-    assert json_data[-1]['_id'] == new_id
+    db = MongoAPI(app.config['DB_NAME'],"polls")
+    polls = db.read()
+    assert polls[-1]['_id'] == new_id
+
+def test_answers_post(client):
+    db = MongoAPI(app.config['DB_NAME'],"polls")
+    polls = db.read()
+    last_poll = polls[-1]
+
+    rv = client.post(
+        '/add_answer',
+        json={
+            "poll_id": last_poll['_id'],
+            "answer": "foo"
+        }   
+    )
+    new_id = rv.get_json()
+    assert rv.status_code == 200
+    assert new_id is not None
+
+    db_answers = MongoAPI(app.config['DB_NAME'],"answers")
+    answers = db_answers.read()
+    last_answer = answers[-1]
+    assert new_id == last_answer["_id"]
+

@@ -11,19 +11,19 @@ app.config['DB_NAME'] = 'polls'
 def base():
     return "status:up"
 
-@app.route('/addAnswer', methods=('POST',))
+@app.route('/add_answer', methods=('POST',))
 def answers_post():
     data = request.json
     res = MongoAPI(app.config['DB_NAME'],"answers").write(data)
     return Response(response=json.dumps(res),status=200,mimetype='application/json')
 
-@app.route('/addPoll', methods=('POST',))
+@app.route('/add_poll', methods=('POST',))
 def polls_post():
     data = request.json
     res = MongoAPI(app.config['DB_NAME'],"polls").write(data)
     return Response(response=json.dumps(res),status=200,mimetype='application/json')    
 
-@app.route('/getPolls')
+@app.route('/get_polls')
 def polls_get():
     db_name=app.config['DB_NAME']
     polls = MongoAPI(db_name,"polls").read()
