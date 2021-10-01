@@ -1,59 +1,52 @@
 from flask import Flask, request, json, Response
 from flask import Flask, request, json, Response
-from pymongo import MongoClient
-import datetime
-from bson import ObjectId
+from util.mongo_client_wrapper import MongoAPI
+from werkzeug.exceptions import HTTPException, BadRequest
 
-print("connecting database...")
-client = MongoClient(host='db')
-print("connection established with Mongo")
-
-class MongoAPI:
-    def __init__(self, document):
-        cursor = client["polls"]
-        self.collection = cursor[document]
-
-    def read(self):
-        documents =  self.collection.find()
-        output = [{item: str(data[item]) for item in data} for data in documents]
-        return output
-
-    def find_byid(self,id):
-        return self.collection.find_one({"_id" : ObjectId(id)})
-
-    def write(self, data):
-        new_document = data
-        new_document["CreatedDate"] = datetime.datetime.today()
-        result = self.collection.insert_one(new_document)
-        return str(result.inserted_id)
+import pdb
 
 
-app = Flask(__name__)   
+app = Flask(__name__)
+app.config['DB_NAME'] = 'polls'
 
 @app.route('/')
 def base():
     return "status:up"
 
-@app.route('/addAnswer')
+@app.route('/add_answer', methods=('POST',))
 def answers_post():
     data = request.json
-    res = MongoAPI("answers").write(data)
+    res = MongoAPI(app.config['DB_NAME'],"answers").write(data)
     return Response(response=json.dumps(res),status=200,mimetype='application/json')
 
-@app.route('/addPoll')
+@app.route('/add_poll', methods=('POST',))
 def polls_post():
     data = request.json
-    res = MongoAPI("polls").write(data)
+    res = MongoAPI(app.config['DB_NAME'],"polls").write(data)
     return Response(response=json.dumps(res),status=200,mimetype='application/json')    
 
-@app.route('/getPolls')
+@app.route('/get_polls')
 def polls_get():
-    polls = MongoAPI("polls").read()
-    answers = MongoAPI("answers").read()
+    db_name=app.config['DB_NAME']
+    polls = MongoAPI(db_name,"polls").read()
+    answers = MongoAPI(db_name,"answers").read()
     for poll in polls:
         poll['answers'] = [answer for answer in answers if answer['poll_id'] == poll['_id']]
-    return Response(response=json.dumps(polls))
+    return Response(response=json.dumps(polls),status=200,mimetype='application/json')
 
+@app.errorhandler(HTTPException)
+def handle_exception(e):
+    """Return JSON instead of HTML for HTTP errors."""
+    # start with the correct headers and status code from the error
+    response = e.get_response()
+    # replace the body with JSON
+    response.data = json.dumps({
+        "code": e.code,
+        "name": e.name,
+        "description": e.description,
+    })
+    response.content_type = "application/json"
+    return response
 
 if __name__ == "__main__":
     print('up')
