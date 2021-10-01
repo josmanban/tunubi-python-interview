@@ -15,7 +15,7 @@ def base():
     return "status:up"
 
 
-@app.route('/add_answer', methods=('POST',))
+@app.route('/add-answer', methods=('POST',))
 def answers_post():
     data = request.json
     res = MongoAPI(app.config['DB_NAME'], "answers").write(data)
@@ -25,7 +25,7 @@ def answers_post():
         mimetype='application/json')
 
 
-@app.route('/add_poll', methods=('POST',))
+@app.route('/add-poll', methods=('POST',))
 def polls_post():
     data = request.json
     res = MongoAPI(app.config['DB_NAME'], "polls").write(data)
@@ -35,7 +35,7 @@ def polls_post():
         mimetype='application/json')
 
 
-@app.route('/get_polls')
+@app.route('/get-polls')
 def polls_get():
     db_name = app.config['DB_NAME']
     polls = MongoAPI(db_name, "polls").read_polls()

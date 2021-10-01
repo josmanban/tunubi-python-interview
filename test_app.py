@@ -34,7 +34,7 @@ def client():
 
 
 def test_list_polls(client):
-    rv = client.get('/get_polls')
+    rv = client.get('/get-polls')
     json_data = rv.get_json()
     assert rv.status_code == 200
     assert json_data is not None
@@ -43,7 +43,7 @@ def test_list_polls(client):
 
 def test_polls_post(client):
     rv = client.post(
-        '/add_poll',
+        '/add-poll',
         json={"poll": "foo"},
         follow_redirects=True
     )
@@ -62,7 +62,7 @@ def test_answers_post(client):
     last_poll = polls[-1]
 
     rv = client.post(
-        '/add_answer',
+        '/add-answer',
         json={
             "poll_id": last_poll['_id'],
             "answer": "foo"
@@ -79,12 +79,12 @@ def test_answers_post(client):
 
 
 def test_not_found(client):
-    rv = client.get("/get_foo")
+    rv = client.get("/get-foo")
     assert rv.status_code == 404
     assert rv.get_json()["name"] == "Not Found"
 
 
 def test_not_allowed_method(client):
-    rv = client.get("/add_poll")
+    rv = client.get("/add-poll")
     assert rv.status_code == 405
     assert rv.get_json()["name"] == "Method Not Allowed"
