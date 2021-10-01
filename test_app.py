@@ -74,3 +74,12 @@ def test_answers_post(client):
     last_answer = answers[-1]
     assert new_id == last_answer["_id"]
 
+def test_not_found(client):
+    rv = client.get("/get_foo")
+    assert rv.status_code == 404
+    assert rv.get_json()["name"] == "Not Found"
+
+def test_not_allowed_method(client):
+    rv = client.get("/add_poll")
+    assert rv.status_code == 405
+    assert rv.get_json()["name"] == "Method Not Allowed"
