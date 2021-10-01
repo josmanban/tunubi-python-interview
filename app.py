@@ -9,30 +9,41 @@ import pdb
 app = Flask(__name__)
 app.config['DB_NAME'] = 'polls'
 
+
 @app.route('/')
 def base():
     return "status:up"
 
-@app.route('/add_answer', methods=('POST',))
+
+@app.route('/add-answer', methods=('POST',))
 def answers_post():
     data = request.json
-    res = MongoAPI(app.config['DB_NAME'],"answers").write(data)
-    return Response(response=json.dumps(res),status=200,mimetype='application/json')
+    res = MongoAPI(app.config['DB_NAME'], "answers").write(data)
+    return Response(
+        response=json.dumps(res),
+        status=200,
+        mimetype='application/json')
 
-@app.route('/add_poll', methods=('POST',))
+
+@app.route('/add-poll', methods=('POST',))
 def polls_post():
     data = request.json
-    res = MongoAPI(app.config['DB_NAME'],"polls").write(data)
-    return Response(response=json.dumps(res),status=200,mimetype='application/json')    
+    res = MongoAPI(app.config['DB_NAME'], "polls").write(data)
+    return Response(
+        response=json.dumps(res),
+        status=200,
+        mimetype='application/json')
 
-@app.route('/get_polls')
+
+@app.route('/get-polls')
 def polls_get():
-    db_name=app.config['DB_NAME']
-    polls = MongoAPI(db_name,"polls").read()
-    answers = MongoAPI(db_name,"answers").read()
-    for poll in polls:
-        poll['answers'] = [answer for answer in answers if answer['poll_id'] == poll['_id']]
-    return Response(response=json.dumps(polls),status=200,mimetype='application/json')
+    db_name = app.config['DB_NAME']
+    polls = MongoAPI(db_name, "polls").read_polls()
+    return Response(
+        response=json.dumps(polls),
+        status=200,
+        mimetype='application/json')
+
 
 @app.errorhandler(HTTPException)
 def handle_exception(e):
@@ -48,10 +59,7 @@ def handle_exception(e):
     response.content_type = "application/json"
     return response
 
+
 if __name__ == "__main__":
     print('up')
     app.run(host='0.0.0.0', debug=True)
-
-
-
-
