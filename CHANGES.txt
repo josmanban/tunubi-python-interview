@@ -1,0 +1,54 @@
+Puntos a considerar
+
+1) Views de creación no se implementan con metodo POST, esto es critico debido
+a que es un standar en la creacion de API REST, tambien en la implentacion
+se esta accediendo a la informacion del request mediante el propiedad request.json
+lo cual busca la informacion en el body de la petición, pero al estar implementados
+con el método GET los datos del request se deberian enviar en el query string
+
+2) Falta de test unitarios en las views, esto es critico, porque los mismos sirven
+para comprobar que la implemetancion de un cambio no arruine la funcionalidad
+ya existente, los mismos deben ser ejecutados para verificar un branch de un
+nuevo feature, por ejemplo al antes de publicar un branch, o mergear un pull request.
+
+3) Dependencias en versiones antiguas a la actual, debemos tratar de usar las ultimas
+versiones de librerias debido a que puede corregir errores en parches de actualizacion
+o implementar nuevas funcionaledes, como tambien optimizar las excistentes
+
+4) Manejo de errores, se debe atrapar las excepciones en un handler y retornar la respuesta
+en un formato json, para que sea mejor la integración con el manejo de errores en el frontend
+
+5) Archivo .gitignore con listado de archivos y directorios a ignorar, asi no se versionan
+archivos de configuracion sensible, caches, entornos virtuales, entre otros.
+
+6) No implementacion de seguiridad con una capa de Autenticacion y Autorizacion, 
+para restringir el uso del sistema solo a usuarios registrados. Se implementaria algun 
+paquete que implement el flujo del protocolo OAuth 2.0 y que en la implementacion de
+los tokens (acceso, refresh) utilice el estandar JWT (o cualquier otro estandar para tokens)
+
+7) Implementacion de una capa de modelos y servicios para no tener demasiada logica de
+negocios en las vistas (actions), y tambien favorecer a la escalabilidad y rehutilización
+
+8) No hay validación de la información antes de guardar la información.
+
+9) Separación del codigo de coneccion y operaciones de base de datos en un modulo distinto
+al principal de la aplicación
+
+10) Requirement.txt con todas las dependencias y sus versiones.
+
+11) Generación de documentacion de la API, mediante una aplicación como swagger, la
+misma debería exponer los endpoint, tipo de metodo, datos que reciben y la respuesta,
+esto facilitaria aun mas la integración con el frontend.
+
+12) Se deberia aplicar un formatter de codigo para respetar PEP8.
+
+13) Ciclo for anidados en poll_get al serializar todas las polls y sus answers, probocando
+que el algoritmo sea del orden O^nxn, se deberia optimizar la query a la db para ese action
+para evitarlo.
+
+14) Urls de endpoints en camelCase en vez de spinal-case, para seguir la recomendacion nombrado de
+recursos en el estandar REST
+
+Los puntos 1,2,3,4,5,9,10,12,13 y 14 fueron implementados a lo largo de los distintos commits
+los test unitarios se corren con el comando
+    pytest -v
